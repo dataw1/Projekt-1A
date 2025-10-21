@@ -59,7 +59,28 @@ public:
         tail = node;
         if (!head) head = node;
     }
+    // Wyświetl całą listę
+    void print() {
+        Node<T>* temp = head;
+        cout << "Lista: ";
+        while (temp) {
+            cout << temp->data << " ";
+            temp = temp->next;
+        }
+        cout << endl;
+    }
 
+    // Zwróć iterator na początek listy
+    ListIterator<T> begin() { return ListIterator<T>(head); }
+};
+
+// Wzorzec Factory
+template<typename T>
+class ListFactory {
+public:
+    static DoublyLinkedList<T>* create() {
+        return new DoublyLinkedList<T>();
+    }
 };
 
 
