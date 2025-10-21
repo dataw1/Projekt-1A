@@ -51,7 +51,14 @@ public:
         head = node;
         if (!tail) tail = node;
     }
-
+    // Dodaj element na koniec listy
+    void push_back(T value) {
+        Node<T>* node = new Node<T>(value);
+        node->prev = tail;
+        if (tail) tail->next = node;
+        tail = node;
+        if (!head) head = node;
+    }
 
 };
 
