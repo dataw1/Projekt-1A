@@ -1,7 +1,7 @@
 ﻿#include <iostream>
 using namespace std;
 
-// Klasa węzła listy
+// Klasa wezla listy
 template<typename T>
 class Node {
 public:
@@ -43,7 +43,7 @@ public:
         tail = nullptr;
     };
 
-    // Dodaj element na początek listy
+    // Dodaj element na poczatek listy
     void push_front(T value) {
         Node<T>* node = new Node<T>(value);
         node->next = head;
@@ -52,8 +52,10 @@ public:
         if (!tail) tail = node;
     }
 
+
 };
 
-int main() {
 
+int main() {
+    
 }
