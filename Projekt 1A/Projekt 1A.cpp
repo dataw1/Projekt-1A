@@ -85,5 +85,22 @@ public:
 
 
 int main() {
-    
+    DoublyLinkedList<int>* lista = ListFactory<int>::create();
+
+    lista->push_back(10);
+    lista->push_back(20);
+    lista->push_front(5);
+
+    lista->print();
+
+    // Iterator
+    auto it = lista->begin();
+    cout << "Pierwszy element: " << it.get() << endl;
+    if (it.hasNext()) {
+        it.next();
+        cout << "Następny element: " << it.get() << endl;
+    }
+
+    delete lista; // zwolnienie pamięci
+    return 0;
 }
