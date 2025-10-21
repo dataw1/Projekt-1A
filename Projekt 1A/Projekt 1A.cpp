@@ -51,56 +51,11 @@ public:
         head = node;
         if (!tail) tail = node;
     }
-    // Dodaj element na koniec listy
-    void push_back(T value) {
-        Node<T>* node = new Node<T>(value);
-        node->prev = tail;
-        if (tail) tail->next = node;
-        tail = node;
-        if (!head) head = node;
-    }
-    // Wyświetl całą listę
-    void print() {
-        Node<T>* temp = head;
-        cout << "Lista: ";
-        while (temp) {
-            cout << temp->data << " ";
-            temp = temp->next;
-        }
-        cout << endl;
-    }
 
-    // Zwróć iterator na początek listy
-    ListIterator<T> begin() { return ListIterator<T>(head); }
-};
 
-// Wzorzec Factory
-template<typename T>
-class ListFactory {
-public:
-    static DoublyLinkedList<T>* create() {
-        return new DoublyLinkedList<T>();
-    }
 };
 
 
 int main() {
-    DoublyLinkedList<int>* lista = ListFactory<int>::create();
-
-    lista->push_back(10);
-    lista->push_back(20);
-    lista->push_front(5);
-
-    lista->print();
-
-    // Iterator
-    auto it = lista->begin();
-    cout << "Pierwszy element: " << it.get() << endl;
-    if (it.hasNext()) {
-        it.next();
-        cout << "Następny element: " << it.get() << endl;
-    }
-
-    delete lista; // zwolnienie pamięci
-    return 0;
+    
 }
