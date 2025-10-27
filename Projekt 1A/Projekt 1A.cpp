@@ -5,8 +5,10 @@
 using namespace std;
 
 /**
- * @brief Konstruktor inicjalizujący pustą listę dwukierunkową.
- * Ustawia wskaźniki przod i tyl na nullptr, co oznacza brak elementów początkowych.
+ * @brief Domyślny konstruktor klasy ListaDwuKierunkowa.
+ *
+ * Inicjalizuje nową, pustą listę. Ustawia wskaźniki 'przod' (głowa) i 'tyl' (ogon)
+ * na 'nullptr', co sygnalizuje, że lista nie zawiera jeszcze żadnych elementów.
  */
 ListaDwuKierunkowa::ListaDwuKierunkowa() {
     przod = nullptr;
@@ -14,9 +16,14 @@ ListaDwuKierunkowa::ListaDwuKierunkowa() {
 }
 
 /**
- * @brief Wyświetla elementy listy od początku do końca.
- * Iteruje po kolejnych węzłach i wypisuje przechowywane wartości.
- * Jeżeli lista jest pusta, informuje o braku elementów.
+ * @brief Wyświetla zawartość listy w kolejności od początku do końca.
+ *
+ * Tworzy tymczasowy wskaźnik 'aktualny', który zaczyna od 'przod'.
+ * Najpierw sprawdza, czy lista jest pusta (czy 'przod' to 'nullptr').
+ * Jeśli tak, wyświetla stosowny komunikat i kończy działanie.
+ * W przeciwnym razie, iteruje przez listę w pętli 'while', dopóki 'aktualny'
+ * nie osiągnie 'nullptr' (końca listy). W każdej iteracji wypisuje
+ * wartość 'dane' bieżącego węzła i przesuwa wskaźnik na następny element.
  */
 void ListaDwuKierunkowa::wyswietl() {
     Powiazanie* aktualny = przod;
@@ -34,34 +41,44 @@ void ListaDwuKierunkowa::wyswietl() {
 }
 
 /**
- * @brief Wyświetla elementy listy od końca do początku.
- * Iteruje od węzła tyl do przodu, wypisując wartości w odwrotnej kolejności.
- * Jeżeli lista jest pusta, informuje o braku elementów.
+ * @brief Wyświetla zawartość listy w kolejności od końca do początku.
+ *
+ * Działa analogicznie do metody 'wyswietl()', ale rozpoczyna iterację
+ * od wskaźnika 'tyl' (ogon listy).
+ * W pętli 'while' przesuwa się wstecz, używając wskaźnika 'poprzedni',
+ * aż do osiągnięcia 'nullptr' (początku listy).
  */
 void ListaDwuKierunkowa::wyswietlNaOdwrot() {
     Powiazanie* aktualny = tyl;
-
+    // Sprawdzenie, czy lista nie jest pusta
     if (!przod) {
         cout << "Lista jest pusta." << endl;
         return;
     }
-
+    // Pętla iterująca od początku do końca
     while (aktualny) {
         cout << aktualny->dane << " ";
-        aktualny = aktualny->poprzedni;
+        aktualny = aktualny->poprzedni;// Przesunięcie do kolejnego węzła
     }
-    cout << endl;
+    cout << endl;// Zakończenie linii po wyświetleniu wszystkich elementów
 }
-
 /**
- * @brief Dodaje nowy element na początek listy.
- * Tworzy węzeł Powiazanie i dołącza go przed dotychczasowym przodem listy.
- * Jeżeli lista była pusta, nowy element staje się jednocześnie przodem i tyłem.
- * @param x Wartość przypisana do nowego elementu.
+ * @brief Dodaje nowy element na sam początek (przód) listy.
+ *
+ * @param x Wartość (liczba całkowita), która ma być przechowywana w nowym węźle.
+ *
+ * Alokuje pamięć dla nowego węzła 'Powiazanie'.
+ * 1. Jeśli lista jest pusta (!przod), nowy węzeł staje się jednocześnie
+ * początkiem ('przod') i końcem ('tyl') listy.
+ * 2. Jeśli lista nie jest pusta, nowy węzeł jest "wpinany" przed stary 'przod':
+ * - 'nowe->nastepny' wskazuje na dotychczasowy 'przod'.
+ * - 'przod->poprzedni' (wskaźnik zwrotny starej głowy) wskazuje na 'nowe'.
+ * - Globalny wskaźnik 'przod' jest aktualizowany, by wskazywał na 'nowe'.
  */
 void ListaDwuKierunkowa::dodajNaPrzod(int x) {
     Powiazanie* nowe = new Powiazanie(x);
-    if (!przod) {
+    // Sprawdzenie, czy lista nie jest pusta
+    if (!przod) { // Wystarczy sprawdzić 'przod', 'tyl' też będzie nullptr
         przod = tyl = nowe;
     }
     else {
@@ -72,10 +89,16 @@ void ListaDwuKierunkowa::dodajNaPrzod(int x) {
 }
 
 /**
- * @brief Dodaje nowy element na koniec listy.
- * Tworzy węzeł Powiazanie i dołącza go za dotychczasowym tyłem listy.
- * Jeżeli lista była pusta, nowy element pełni rolę przodu oraz tyłu.
- * @param x Wartość przypisana do nowego elementu.
+ * @brief Dodaje nowy element na sam koniec (tył) listy.
+ *
+ * @param x Wartość (liczba całkowita), która ma być przechowywana w nowym węźle.
+ *
+ * Działa analogicznie do 'dodajNaPrzod', ale operuje na wskaźniku 'tyl'.
+ * 1. Jeśli lista jest pusta (!tyl), nowy węzeł staje się 'przodem' i 'tylem'.
+ * 2. Jeśli lista nie jest pusta, nowy węzeł jest "dopinany" za stary 'tyl':
+ * - 'tyl->nastepny' (wskaźnik do przodu starego ogona) wskazuje na 'nowe'.
+ * - 'nowe->poprzedni' wskazuje na dotychczasowy 'tyl'.
+ * - Globalny wskaźnik 'tyl' jest aktualizowany, by wskazywał na 'nowe'.
  */
 void ListaDwuKierunkowa::dodajNaTyl(int x) {
     Powiazanie* nowe = new Powiazanie(x);
@@ -90,9 +113,17 @@ void ListaDwuKierunkowa::dodajNaTyl(int x) {
 }
 
 /**
- * @brief Usuwa element na początku listy.
- * Zwalnia pierwszy węzeł i aktualizuje wskaźnik przod.
- * Gdy po operacji lista jest pusta, zeruje również wskaźnik tyl.
+ * @brief Usuwa pierwszy element (węzeł 'przod') z listy.
+ *
+ * Jeśli lista jest pusta ('!przod'), funkcja nic nie robi.
+ * W przeciwnym razie, przechowuje wskaźnik do usuwanego węzła w 'temp'.
+ * 1. Przypadek specjalny: lista ma tylko jeden element ('przod == tyl').
+ * Po usunięciu lista staje się pusta, więc 'przod' i 'tyl' są ustawiane na 'nullptr'.
+ * 2. Przypadek standardowy: lista ma więcej elementów.
+ * - Wskaźnik 'przod' jest przesuwany na następny element ('przod->nastepny').
+ * - Nowy 'przod' musi mieć wskaźnik 'poprzedni' ustawiony na 'nullptr',
+ * ponieważ staje się pierwszym elementem (odcinamy połączenie ze starym 'przodem').
+ * Na końcu pamięć wskazywana przez 'temp' jest zwalniana.
  */
 void ListaDwuKierunkowa::usunPrzod() {
     if (!przod) return;
@@ -111,9 +142,17 @@ void ListaDwuKierunkowa::usunPrzod() {
 }
 
 /**
- * @brief Usuwa element na końcu listy.
- * Zwalnia ostatni węzeł i aktualizuje wskaźnik tyl.
- * Jeżeli po usunięciu lista jest pusta, zeruje także wskaźnik przod.
+ * @brief Usuwa ostatni element (węzeł 'tyl') z listy.
+ *
+ * Działa symetrycznie do 'usunPrzod'.
+ * Jeśli lista jest pusta ('!tyl'), funkcja nic nie robi.
+ * Przechowuje wskaźnik do 'tyl' w 'temp'.
+ * 1. Przypadek specjalny: jeden element ('przod == tyl'). Lista staje się pusta.
+ * 2. Przypadek standardowy: więcej elementów.
+ * - Wskaźnik 'tyl' jest przesuwany na poprzedni element ('tyl->poprzedni').
+ * - Nowy 'tyl' musi mieć wskaźnik 'nastepny' ustawiony na 'nullptr',
+ * ponieważ staje się ostatnim elementem.
+ * Na końcu pamięć wskazywana przez 'temp' jest zwalniana.
  */
 void ListaDwuKierunkowa::usunTyl() {
     if (!tyl) return;
@@ -132,10 +171,20 @@ void ListaDwuKierunkowa::usunTyl() {
 }
 
 /**
- * @brief Dodaje nowy element pod wskazanym indeksem listy.
- * Dla indeksu równego zero wstawia węzeł na początek, a gdy pozycja wykracza poza listę dołącza element na końcu.
- * @param val Wartość przypisana do nowego elementu.
- * @param index Indeks, pod którym należy umieścić nowy węzeł.
+ * @brief Dodaje nowy element o wartości 'val' na pozycję określoną przez 'index'.
+ *
+ * @param val Wartość do wstawienia.
+ * @param index Pozycja, na którą element ma być wstawiony (licząc od 0).
+ *
+ * 1. Jeśli 'index' to 0, wywoływana jest funkcja 'dodajNaPrzod'.
+ * 2. W przeciwnym razie, funkcja iteruje przez listę do węzła na pozycji 'index - 1'
+ * (czyli węzła *przed* miejscem docelowym).
+ * 3. Jeśli 'index' jest poza zakresem (np. 10 na 5-elementowej liście),
+ * pętla zakończy się, a warunek '(!aktualny || !aktualny->nastepny)'
+ * sprawi, że element zostanie dodany na końcu listy przez 'dodajNaTyl'.
+ * 4. Jeśli 'index' jest w środku listy, tworzony jest nowy węzeł i "wpinany"
+ * pomiędzy 'aktualny' (na poz. index-1) a 'aktualny->nastepny' (na poz. index).
+ * Wymaga to aktualizacji 4 wskaźników.
  */
 void ListaDwuKierunkowa::dodajPodIndeks(int val, int index) {
     if (index == 0) {
@@ -166,8 +215,18 @@ void ListaDwuKierunkowa::dodajPodIndeks(int val, int index) {
 
 /**
  * @brief Usuwa element znajdujący się pod danym indeksem.
- * Dla indeksu równego zero usuwa pierwszy element; brak wskazanego węzła sygnalizuje komunikatem o błędzie.
- * @param index Indeks elementu przeznaczonego do usunięcia.
+ *
+ * @param index Indeks elementu do usunięcia (licząc od 0).
+ *
+ * 1. Jeśli 'index' to 0, wywoływana jest funkcja 'usunPrzod'.
+ * 2. W przeciwnym razie, funkcja iteruje do węzła *na* pozycji 'index'.
+ * 3. Jeśli 'index' jest poza zakresem, wyświetlany jest błąd.
+ * 4. Jeśli węzeł na pozycji 'index' jest ostatnim elementem ('aktualny == tyl'),
+ * wywoływana jest funkcja 'usunTyl'.
+ *
+ * 5. Jeśli element jest w środku listy, kod wykonuje tylko 'delete aktualny'.
+ * NIE następuje połączenie węzła 'aktualny->poprzedni' z 'aktualny->nastepny'.
+ * To powoduje uszkodzenie struktury listy i prowadzi do awarii programu.
  */
 void ListaDwuKierunkowa::usunIndeks(int index) {
     if (index == 0) {
@@ -198,9 +257,14 @@ void ListaDwuKierunkowa::usunIndeks(int index) {
 }
 
 /**
- * @brief Wyświetla element następujący po węźle o podanym indeksie.
- * Gdy istnieje kolejny element, wypisuje jego wartość, w przeciwnym razie informuje o braku następnika.
- * @param index Indeks elementu, dla którego sprawdzany jest następnik.
+ * @brief Wyświetla wartość elementu następującego po węźle o podanym indeksie.
+ *
+ * @param index Indeks węzła, którego następnika szukamy.
+ *
+ * Funkcja najpierw iteruje do węzła na pozycji 'index'.
+ * Jeśli węzeł ten ('aktualny') istnieje i ma następnika ('aktualny->nastepny'),
+ * wyświetla jego wartość.
+ * W przeciwnym razie (indeks zły lub brak następnika), wyświetla komunikat.
  */
 void ListaDwuKierunkowa::wyswietlNastepny(int index) {
     Powiazanie* aktualny = przod;
@@ -224,9 +288,14 @@ void ListaDwuKierunkowa::wyswietlNastepny(int index) {
 }
 
 /**
- * @brief Wyświetla element poprzedzający węzeł o podanym indeksie.
- * Gdy istnieje poprzednik, wypisuje jego wartość, a w przeciwnym wypadku informuje o jej braku.
- * @param index Indeks elementu, dla którego sprawdzany jest poprzednik.
+ * @brief Wyświetla wartość elementu poprzedzającego węzeł o podanym indeksie.
+ *
+ * @param index Indeks węzła, którego poprzednika szukamy.
+ *
+ * Działa analogicznie do 'wyswietlNastepny'.
+ * Iteruje do węzła na pozycji 'index'.
+ * Jeśli węzeł ten ('aktualny') istnieje i ma poprzednika ('aktualny->poprzedni'),
+ * wyświetla jego wartość.
  */
 void ListaDwuKierunkowa::wyswietlPoprzedni(int index) {
     Powiazanie* aktualny = przod;
@@ -250,8 +319,12 @@ void ListaDwuKierunkowa::wyswietlPoprzedni(int index) {
 }
 
 /**
- * @brief Usuwa wszystkie elementy z listy.
- * Iteracyjnie zwalnia węzły rozpoczynając od przodu, aż struktura będzie pusta.
+ * @brief Usuwa wszystkie elementy z listy i zwalnia zajmowaną przez nie pamięć.
+ *
+ * Funkcja działa w pętli, dopóki wskaźnik 'przod' nie stanie się 'nullptr'.
+ * W każdej iteracji wywołuje 'usunPrzod()', która bezpiecznie usuwa
+ * pierwszy element i przesuwa wskaźnik 'przod'. Jest to efektywny
+ * i bezpieczny sposób na opróżnienie listy.
  */
 void ListaDwuKierunkowa::wyczysc() {
     while (przod) {
@@ -260,8 +333,13 @@ void ListaDwuKierunkowa::wyczysc() {
 }
 
 /**
- * @brief Testowo tworzy dwuelementowy układ połączeń.
- * Dodaje dwa węzły, łączy je ze sobą i przypisuje jako przód oraz tył listy.
+ * @brief Funkcja testowa, która tworzy "na sztywno" dwuelementową listę.
+ * Funkcja ta tworzy dwa nowe węzły i bezwarunkowo nadpisuje
+ * globalne wskaźniki 'przod' i 'tyl'.
+ * Jeśli lista zawierała wcześniej jakieś elementy, wskaźniki do nich
+ * zostają utracone, a pamięć po nich nigdy nie będzie zwolniona,
+ * co prowadzi do wycieku pamięci.
+ * Poprawna implementacja powinna najpierw wywołać 'wyczysc()'.
  */
 void ListaDwuKierunkowa::test() {
     Powiazanie* pierwszy = new Powiazanie(2);

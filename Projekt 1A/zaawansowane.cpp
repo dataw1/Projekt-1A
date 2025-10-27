@@ -55,6 +55,5 @@ int main() {
 
 	lista.wyswietl();
 
-	getch();
 	return 0;
 }
